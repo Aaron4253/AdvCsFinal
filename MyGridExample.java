@@ -20,7 +20,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private ImageIcon wallNut1 = new ImageIcon("graphics/wallNut1.gif");
    private ImageIcon redTile = new ImageIcon("graphics/images_1.jpg");      //JPG images can not have transparency
    private ImageIcon crossHair = new ImageIcon("graphics/crossHair.GIF");	//GIF immages can have transparency
-   private ImageIcon zombie = new ImageIcon("graphics/zombie.gif");	
+   private ImageIcon zombie = new ImageIcon("graphics/zombie2.gif");	
    private static final int SIZE=60;	//size of cell being drawn
  
    //This array will be represented graphically on the screen
