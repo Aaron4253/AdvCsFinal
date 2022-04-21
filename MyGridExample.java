@@ -131,7 +131,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          y+=SIZE;
       }
       for(projectile proj : projectiles){
-         if(proj.getColor().equals("blue")){
+         if(proj.getColor().equals("blue")){//checks if a projectile is shot from the iceShooter
                g.setColor(Color.blue);//projectile color
             if(proj != null){
                g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE  + 50, 15, 15);
@@ -147,9 +147,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
 
       for(zombie z : zombies){
          if(z != null){
-            if(z.getMovementSpeed() < 0.001){
-               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
-
+            if(z.getMovementSpeed() < 0.001){//checks if the zombie is considered slowed
+               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null); 
+               //creates the image of a slowed zombie
             }else{
             g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
             //draw zombie here
@@ -282,8 +282,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                   if(temp != null && temp.getDamage() != 0){//wall nuts or plants that do not do damage are not given a projectile.
                      for(zombie z : zombies){//checks if a zombie is in the same row as plant, then the plant will shoot.
                         if(z.getY() == i){
-                           if(plantBoard[i][j].getDamage() == 25){
+                           if(plantBoard[i][j].getDamage() == 25){//this damage is unqiue to iceShooter
                               temp.setColor("blue");
+                              //the projectile color is set to blue, all zombies hit by it will have their ms slowed
                            }
                            projectiles.add(temp);
                         }
