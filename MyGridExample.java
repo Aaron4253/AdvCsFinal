@@ -224,7 +224,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          boolean onePercentChance = (Math.random() < 0.001);
          if(onePercentChance){
             int random = (int)(Math. random()*(4-0+1))+0;
-            zombies.add(new zombie(10.0, random, 50, 10));         
+            zombies.add(new zombie(9.2, random, 50, 10));         
          }
          /*if(t){
             zombies.add(new zombie(10.0, 3, 50, 10));         
