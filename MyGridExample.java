@@ -322,6 +322,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          for(int i = 0; i < plantBoard.length; i++){
             for(int j = 0; j < plantBoard[0].length; j++){
                for(int k = 0; k < zombies.size(); k++){
+                  if(plantBoard[i][j] == null && zombies.get(k).isEating() && zombies.get(k).getY() == i && Math.abs(zombies.get(k).getX() - j) < 0.1) zombies.get(k).setIsEating(false);
                   if(plantBoard[i][j] != null){
                      if(zombies.get(k).getY() == i && Math.abs(zombies.get(k).getX() - j) < 0.1){//if a zombie overlaps a plant
                         zombies.get(k).setIsEating(true);//zombie is then halted to eat the plant
@@ -331,8 +332,6 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                            plantBoard[i][j] = null;
                            pieces[i][j] = 0;
                         }
-                     }else{
-                        //zombies.get(k).setIsEating(false);
                      }
                   }
                }
