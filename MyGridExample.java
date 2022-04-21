@@ -301,8 +301,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             }
          }
          //to check if a projectile collides with a zombie
-         for(int i = 0; i < zombies.size(); i++){            
-            for(int j = 0; j < projectiles.size(); j++){
+         for(int i = 0; i < zombies.size() - 1; i++){            
+            for(int j = 0; j < projectiles.size() - 1; j++){
+            if(zombies.get(i) != null && projectiles.get(j) != null){
                if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
                   zombies.get(i).deductHp(projectiles.get(j).getDamage());
                   if(projectiles.get(j).getColor().equals("blue")){
@@ -315,6 +316,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                   }
                   projectiles.remove(j);//projectile is removed regardless.
                   //System.out.println("projectile has been removed");
+               }
                }
             }
          }
