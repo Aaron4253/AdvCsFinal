@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
-
+//the color for slowed zombies is #107ad1
 public class MyGridExample extends JPanel implements MouseListener, MouseMotionListener
 {
    //boolean t = true;
@@ -24,6 +24,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private ImageIcon crossHair = new ImageIcon("graphics/crossHair.GIF");	//GIF immages can have transparency
    private ImageIcon zombie = new ImageIcon("graphics/zombie2.gif");	
    private ImageIcon iceZombie = new ImageIcon("graphics/iceZombie.gif");	
+   private ImageIcon zombieEating = new ImageIcon("graphics/zombieEating.gif");	
+   private ImageIcon iceZombieEating = new ImageIcon("graphics/iceZombieEating.gif");	
+
 
    private static final int SIZE=60;	//size of cell being drawn
  
@@ -34,7 +37,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private static plant[][] plantBoard;  
    private static plant[] buyMenu;  
    private static ArrayList<projectile> projectiles;
-   ArrayList<zombie> zombies;
+   private static ArrayList<zombie> zombies;   
    private static int playerR;			//start row for the player selection tool
    private static int playerC;			//start col for the player selection tool
    private static int selected;        //value of the piece selected (0-none, 1-black chip, 2-white chip)
@@ -52,7 +55,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       money = 1000;
       board = new int[5][10];      //background
       pieces = new int[5][10];     //pieces that go on top of the background
-      //timer 
+      //timer
       timer = new Timer(0, new Listener());      
       //
       //plant logic starts here
@@ -96,7 +99,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    //       0-no piece, 1-black chip, 2-white chip
    public void showBoard(Graphics g)	
    {
-      g.drawImage(peaShooter.getImage(), 20, 20, SIZE, SIZE, null);  // go to line  if(mouseC == 0 && mouseR == 0){ around 173
+      g.drawImage(peaShooter.getImage(), 20, 20, SIZE, SIZE, null); // go to line  if(mouseC == 0 && mouseR == 0){ around 173
       g.drawImage(wallNut.getImage(), 100, 20, SIZE, SIZE, null);
       g.drawImage(iceShooter.getImage(), 180, 20, SIZE, SIZE, null);
 
@@ -134,12 +137,12 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          if(proj.getColor().equals("blue")){//checks if a projectile is shot from the iceShooter
                g.setColor(Color.blue);//projectile color
             if(proj != null){
-               g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE  + 50, 15, 15);
+               g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 15, 15);
             }
          }else{
                g.setColor(Color.green);//projectile color
             if(proj != null){
-               g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE  + 50, 15, 15);
+               g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 15, 15);
             }
          }
          
@@ -147,12 +150,16 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
 
       for(zombie z : zombies){
          if(z != null){
-            if(z.getMovementSpeed() < 0.001){//checks if the zombie is considered slowed
-               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null); 
+            if(z.getMovementSpeed() == 0.0002 && z.isEating()){//checks if the zombie is considered slowed
+               g.drawImage(iceZombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null); 
                //creates the image of a slowed zombie
+            }else if(z.getMovementSpeed() == 0.0002){
+               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null); 
+            }else if(z.isEating()){
+               g.drawImage(zombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
             }else{
-            g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
-            //draw zombie here
+               g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
+               //draw zombie here
             }
          }
       }
@@ -183,7 +190,6 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       g.drawString("$100", 20, 20);
       g.drawString("$50", 100, 20);
       g.drawString("$150", 180, 20);
-
 
    }
 
@@ -304,6 +310,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                   }
                   if(zombies.get(i).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
                      zombies.remove(i);
+                     money += 50;
                      //System.out.println("zombie has been removed");
                   }
                   projectiles.remove(j);//projectile is removed regardless.
@@ -324,6 +331,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                            plantBoard[i][j] = null;
                            pieces[i][j] = 0;
                         }
+                     }else{
+                        //zombies.get(k).setIsEating(false);
                      }
                   }
                }
@@ -341,7 +350,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          if(mouseX < board[0].length*SIZE && mouseY < 100){
             int mouseC = (mouseX/SIZE);
             int mouseR = (mouseY/SIZE);
-            System.out.println(mouseC + " " + mouseR);
+            //System.out.println(mouseC + " " + mouseR);
             if(mouseC == 0 && mouseR == 0){//for peashooter
                if(money >= 100){//cost
                   selected = 2;

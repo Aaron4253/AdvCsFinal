@@ -46,6 +46,10 @@ class zombie{
         this.movementSpeed = movementSpeed;
     }
 
+    public boolean isEating(){
+        return this.isEating;
+    }
+
     public void incrementX(){
         if(isEating){
             x-= 0.0;
