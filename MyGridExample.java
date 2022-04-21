@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MyGridExample extends JPanel implements MouseListener, MouseMotionListener
 {
+   boolean t = true;
    private ImageIcon black = new ImageIcon("graphics/blackPiece.gif");//change these to plants.
    private ImageIcon white = new ImageIcon("graphics/whitePiece.gif");
    private ImageIcon blueTile = new ImageIcon("graphics/images_1.jpg");
@@ -131,7 +132,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
 
       for(zombie z : zombies){
          if(z != null){
-            g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE), z.getY()*SIZE + SIZE - 50, SIZE, SIZE, null);  
+            g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE), z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
             //draw zombie here
          }
       }
@@ -222,11 +223,17 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          //for zombies
          boolean onePercentChance = (Math.random() < 0.001);
          if(onePercentChance){
-            int random = (int)(Math. random()*(5-1+1))+1;
+            int random = (int)(Math. random()*(4-0+1))+0;
             zombies.add(new zombie(10.0, random, 50, 10));         
          }
+         /*if(t){
+            zombies.add(new zombie(10.0, 3, 50, 10));         
+            t = false;
+         }*/
+
          for(int index = 0; index < zombies.size(); index++){
             zombies.get(index).incrementX();
+            //System.out.println("zombie x:" + zombies.get(index).getX() + "zombie y:" + zombies.get(index).getY());
             if(zombies.get(index).getX() < 0){
                zombies.remove(index);
             }
@@ -235,6 +242,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          //for projectiles
          for(int i = 0; i < projectiles.size(); i++){
             projectiles.get(i).incrementX();
+            //System.out.println("projectile X:" + projectiles.get(i).getX() + "projectile Y:" + projectiles.get(i).getY());
             if(projectiles.get(i).getX() > 10.0){
                projectiles.remove(i);
             }
@@ -246,13 +254,26 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                   plantBoard[i][j].incrementFrame();//increments all plant's frames in plantBoard by 1
                   projectile temp = plantBoard[i][j].shoot(); 
                   if(temp != null && temp.getDamage() != 0){
-                     projectiles.add(temp);
+                     for(zombie z : zombies){
+                        if(z.getY() == i){
+                           projectiles.add(temp);
+                        }
+                     }
                      //System.out.println("added a projectile");
                   }
                }
             }
          }
-         
+         //to check if a projectile collides with a zombie
+         for(int i = 0; i < zombies.size(); i++){            
+            for(int j = 0; j < projectiles.size(); j++){
+               if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
+                  zombies.remove(i);
+                  projectiles.remove(j);
+                  System.out.println("zombie and projectile is being removed");
+               }
+            }
+         }
 
          repaint();
       }

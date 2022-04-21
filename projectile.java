@@ -1,5 +1,5 @@
 class projectile{
-    double x;
+    Double x;
     int y;
     int damage;
     public projectile(Double x, int y, int damage){
@@ -14,10 +14,6 @@ class projectile{
 
     public Double getX(){
         return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
     }
 
     public int getY() {
