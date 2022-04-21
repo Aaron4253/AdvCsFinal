@@ -151,14 +151,14 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       for(zombie z : zombies){
          if(z != null){
             if(z.getMovementSpeed() == 0.0002 && z.isEating()){//checks if the zombie is considered slowed
-               g.drawImage(iceZombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null); 
+               g.drawImage(iceZombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +15, SIZE+30, SIZE+30, null); 
                //creates the image of a slowed zombie
             }else if(z.getMovementSpeed() == 0.0002){
-               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null); 
+               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE + 15, SIZE+30, SIZE+30, null); 
             }else if(z.isEating()){
-               g.drawImage(zombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
+               g.drawImage(zombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE + 15, SIZE+30, SIZE+30, null);  
             }else{
-               g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
+               g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE + 15, SIZE+30, SIZE+30, null);  
                //draw zombie here
             }
          }
@@ -251,9 +251,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
          //for zombies
-         boolean onePercentChance = (Math.random() < 0.005);
+         boolean onePercentChance = (Math.random() < 0.003);//controls the rate at which zombies are randomly spawned
          if(onePercentChance){
-            int random = (int)(Math. random()*(4-0+1))+0;
+            int random = (int)(Math. random()*(4-0+1))+0;//controls the lane that the zombie is spawned in
             int randomHealth = (int)(Math.random()*(500-1+1)) + 1;
             zombies.add(new zombie(9.2, random, randomHealth, 1));         
          }
@@ -322,7 +322,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          for(int i = 0; i < plantBoard.length; i++){
             for(int j = 0; j < plantBoard[0].length; j++){
                for(int k = 0; k < zombies.size(); k++){
-                  if(plantBoard[i][j] == null && zombies.get(k).isEating() && zombies.get(k).getY() == i && Math.abs(zombies.get(k).getX() - j) < 0.1) zombies.get(k).setIsEating(false);
+                  //below fixes all zombies that are stuck eating but aren't actually eating any plants.
+                  if(plantBoard[i][j] == null && zombies.get(k).isEating() && zombies.get(k).getY() == i && Math.abs(zombies.get(k).getX() - j) < 0.1) 
+                     zombies.get(k).setIsEating(false);
                   if(plantBoard[i][j] != null){
                      if(zombies.get(k).getY() == i && Math.abs(zombies.get(k).getX() - j) < 0.1){//if a zombie overlaps a plant
                         zombies.get(k).setIsEating(true);//zombie is then halted to eat the plant
