@@ -55,7 +55,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       plantBoard = new plant[5][10];//new plant board to control the backend
       buyMenu = new plant[3]; // can change this value as more types of plants are added
       buyMenu[2] = new plant(0, 0, 50, 20, 300);//peashooter is 2
-      buyMenu[1] = new plant(0, 0, 350, 0, 0);//wallnut is 1
+      buyMenu[1] = new plant(0, 0, 3000, 0, 0);//wallnut is 1
       //plant logic ends here
       //projectile logic begins here
       projectiles = new ArrayList<projectile>();
@@ -132,7 +132,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
 
       for(zombie z : zombies){
          if(z != null){
-            g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE), z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
+            g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +20, SIZE, SIZE, null);  
             //draw zombie here
          }
       }
@@ -154,9 +154,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
 
    public void updateMoney(Graphics g){
       String moneyString = Integer.toString(money);      
-      g.setFont(new Font("TimesRoman", Font.PLAIN, 40)); 
+      g.setFont(new Font("TimesRoman", Font.PLAIN, 25)); 
       g.setColor(Color.white);
-      g.drawString("Money:" +moneyString, 350, 50);
+      g.drawString("Money:" +moneyString, 450, 25);
       g.setFont(new Font("TimesRoman", Font.PLAIN, 20)); 
       g.drawString("$100", 20, 30);
       g.drawString("$50", 100, 30);
@@ -221,10 +221,11 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
          //for zombies
-         boolean onePercentChance = (Math.random() < 0.001);
+         boolean onePercentChance = (Math.random() < 0.002);
          if(onePercentChance){
             int random = (int)(Math. random()*(4-0+1))+0;
-            zombies.add(new zombie(9.2, random, 50, 10));         
+            int randomHealth = 10000; //(int)(Math.random()*(200-1+1)) + 1;
+            zombies.add(new zombie(9.2, random, randomHealth, 1));         
          }
          /*if(t){
             zombies.add(new zombie(10.0, 3, 50, 10));         
@@ -235,6 +236,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             zombies.get(index).incrementX();
             //System.out.println("zombie x:" + zombies.get(index).getX() + "zombie y:" + zombies.get(index).getY());
             if(zombies.get(index).getX() < 0){
+               System.out.println("The Zombies ate your brains");
                zombies.remove(index);
             }
          }
@@ -253,8 +255,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                if(plantBoard[i][j] != null){
                   plantBoard[i][j].incrementFrame();//increments all plant's frames in plantBoard by 1
                   projectile temp = plantBoard[i][j].shoot(); 
-                  if(temp != null && temp.getDamage() != 0){
-                     for(zombie z : zombies){
+                  if(temp != null && temp.getDamage() != 0){//wall nuts or plants that do not do damage are not given a projectile.
+                     for(zombie z : zombies){//checks if a zombie is in the same row as plant, then the plant will shoot.
                         if(z.getY() == i){
                            projectiles.add(temp);
                         }
@@ -269,17 +271,33 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             for(int j = 0; j < projectiles.size(); j++){
                if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
                   zombies.get(i).deductHp(projectiles.get(j).getDamage());
-                  if(zombies.get(i).getHealth() <= 0){
+                  if(zombies.get(i).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
                      zombies.remove(i);
-                     System.out.println("zombie has been removed");
-
+                     //System.out.println("zombie has been removed");
                   }
-                  projectiles.remove(j);
-                  System.out.println("projectile has been removed");
+                  projectiles.remove(j);//projectile is removed regardless.
+                  //System.out.println("projectile has been removed");
                }
             }
          }
-
+         //check if zombie is ontop of a plant
+         for(int i = 0; i < plantBoard.length; i++){
+            for(int j = 0; j < plantBoard[0].length; j++){
+               for(int k = 0; k < zombies.size(); k++){
+                  if(plantBoard[i][j] != null){
+                     if(zombies.get(k).getY() == i && Math.abs(zombies.get(k).getX() - j) < 0.1){//if a zombie overlaps a plant
+                        zombies.get(k).setIsEating(true);//zombie is then halted to eat the plant
+                        plantBoard[i][j].deductHp(zombies.get(k).getDamage());//zombie inflicts damage each frame
+                        if(plantBoard[i][j].getHealth() <= 0){//remove the plant if its HP is reduced under 0
+                           zombies.get(k).setIsEating(false);
+                           plantBoard[i][j] = null;
+                           pieces[i][j] = 0;
+                        }
+                     }
+                  }
+               }
+            }
+         }
          repaint();
       }
    }
