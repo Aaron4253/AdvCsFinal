@@ -38,6 +38,10 @@ class zombie{
         x-=0.001;
     }
 
+    public void deductHp(int hp){
+        this.health -= hp;
+    }
+
     public zombie copy(){
         return new zombie(x, y, health, damage);
     }

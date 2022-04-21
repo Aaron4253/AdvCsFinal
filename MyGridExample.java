@@ -268,9 +268,14 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          for(int i = 0; i < zombies.size(); i++){            
             for(int j = 0; j < projectiles.size(); j++){
                if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
-                  zombies.remove(i);
+                  zombies.get(i).deductHp(projectiles.get(j).getDamage());
+                  if(zombies.get(i).getHealth() <= 0){
+                     zombies.remove(i);
+                     System.out.println("zombie has been removed");
+
+                  }
                   projectiles.remove(j);
-                  System.out.println("zombie and projectile is being removed");
+                  System.out.println("projectile has been removed");
                }
             }
          }
