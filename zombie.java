@@ -1,17 +1,41 @@
 class zombie{
-    int x;
+    Double x;
     int y;
     int health;
     int damage;
     int delay;
     int currentFrame;
 
-    public zombie(int x, int y, int health, int damage){
+    public zombie(Double x, int y, int health, int damage){
         this.x = x;
         this.y = y;
         this.health = health;
         this.damage = damage;
         this.currentFrame = 0;
+    }
+
+    public Double getX(){
+        return x;
+    }
+
+    public int getY(){
+        return y;
+    }
+
+    public int getHealth(){
+        return health;
+    }
+
+    public int getDamage(){
+        return damage;
+    }
+
+    public int getCurrentFrame(){
+        return currentFrame;
+    }
+
+    public void incrementX(){
+        x-=0.001;
     }
 
     public zombie copy(){

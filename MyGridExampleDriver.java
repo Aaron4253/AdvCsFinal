@@ -13,7 +13,7 @@
       {
          screen = new MyGridExample();
          JFrame frame = new JFrame("Arrays Represented in Graphics with Keyboard and Mouse Input");	//window title
-         frame.setSize(800, 800);					//Size of game window
+         frame.setSize(625, 450);					//Size of game window
          frame.setLocation(100, 50);				//location of game window on the screen
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
          frame.setContentPane(screen);		

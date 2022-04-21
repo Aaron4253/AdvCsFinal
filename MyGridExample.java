@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 public class MyGridExample extends JPanel implements MouseListener, MouseMotionListener
@@ -17,7 +19,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private ImageIcon wallNut1 = new ImageIcon("graphics/wallNut1.gif");
    private ImageIcon redTile = new ImageIcon("graphics/images_1.jpg");      //JPG images can not have transparency
    private ImageIcon crossHair = new ImageIcon("graphics/crossHair.GIF");	//GIF immages can have transparency
-
+   private ImageIcon zombie = new ImageIcon("graphics/zombie.gif");	
    private static final int SIZE=60;	//size of cell being drawn
  
    //This array will be represented graphically on the screen
@@ -27,10 +29,11 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private static plant[][] plantBoard;  
    private static plant[] buyMenu;  
    private static ArrayList<projectile> projectiles;
+   ArrayList<zombie> zombies;
    private static int playerR;			//start row for the player selection tool
    private static int playerC;			//start col for the player selection tool
    private static int selected;        //value of the piece selected (0-none, 1-black chip, 2-white chip)
-   private static plant selectedPlant;
+   private static plant selectedPlant; //holds onto the plant Object that is selected (backend)
    protected static int mouseX;			//locations for the mouse pointer
    protected static int mouseY;
    private int money;
@@ -56,7 +59,10 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       //projectile logic begins here
       projectiles = new ArrayList<projectile>();
       //projectile logic ends here
-      selected = 0;
+      //zombie logic begins here
+      zombies = new ArrayList<zombie>();
+      //zombie logic ends here
+      selected = 0; //holds onto the image of the plant selected
       int nextValue = 0;            //to assign alternating values to the board (0,1)
       for(int r=0;r<board.length;r++)	
       {
@@ -117,11 +123,19 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          y+=SIZE;
       }
       for(projectile proj : projectiles){
-         g.setColor(Color.black);
+         g.setColor(Color.green);//projectile color
          if(proj != null){
             g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE  + 50, 15, 15);
          }
       }
+
+      for(zombie z : zombies){
+         if(z != null){
+            g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE), z.getY()*SIZE + SIZE - 50, SIZE, SIZE, null);  
+            //draw zombie here
+         }
+      }
+      
       updateMouse(g);
       updateMoney(g);
    }
@@ -138,8 +152,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    }
 
    public void updateMoney(Graphics g){
-      String moneyString = Integer.toString(money);
-      
+      String moneyString = Integer.toString(money);      
       g.setFont(new Font("TimesRoman", Font.PLAIN, 40)); 
       g.setColor(Color.white);
       g.drawString("Money:" +moneyString, 350, 50);
@@ -206,17 +219,31 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    {
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
+         //for zombies
+         boolean onePercentChance = (Math.random() < 0.001);
+         if(onePercentChance){
+            int random = (int)(Math. random()*(5-1+1))+1;
+            zombies.add(new zombie(10.0, random, 50, 10));         
+         }
+         for(int index = 0; index < zombies.size(); index++){
+            zombies.get(index).incrementX();
+            if(zombies.get(index).getX() < 0){
+               zombies.remove(index);
+            }
+         }
+
+         //for projectiles
          for(int i = 0; i < projectiles.size(); i++){
             projectiles.get(i).incrementX();
             if(projectiles.get(i).getX() > 10.0){
                projectiles.remove(i);
             }
          }
-
+         //for plants
          for(int i = 0; i < plantBoard.length; i++){
             for(int j = 0; j < plantBoard[0].length; j++){
                if(plantBoard[i][j] != null){
-                  plantBoard[i][j].incrementFrame();//increments all plant's frams in plantBoard by 1
+                  plantBoard[i][j].incrementFrame();//increments all plant's frames in plantBoard by 1
                   projectile temp = plantBoard[i][j].shoot(); 
                   if(temp != null && temp.getDamage() != 0){
                      projectiles.add(temp);
@@ -225,6 +252,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                }
             }
          }
+         
+
          repaint();
       }
    }
