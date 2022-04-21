@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MyGridExample extends JPanel implements MouseListener, MouseMotionListener
 {
-   boolean t = true;
+   //boolean t = true;
    private ImageIcon black = new ImageIcon("graphics/blackPiece.gif");//change these to plants.
    private ImageIcon white = new ImageIcon("graphics/whitePiece.gif");
    private ImageIcon blueTile = new ImageIcon("graphics/images_1.jpg");
@@ -38,6 +38,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    protected static int mouseX;			//locations for the mouse pointer
    protected static int mouseY;
    private int money;
+
    public MyGridExample()
    {
       addMouseListener( this );
@@ -107,8 +108,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             if(pieces[r][c]==1)              //draw the player chips
                g.drawImage(wallNut1.getImage(), x, y, SIZE, SIZE, null);  
             else if(pieces[r][c]==2)
-               g.drawImage(peaShooter1.getImage(), x, y, SIZE, SIZE, null);  
-             
+               g.drawImage(peaShooter1.getImage(), x, y, SIZE, SIZE, null);               
             /*if(r==playerR && c==playerC)	   //draw the crosshair on the board after the cell has been drawn
             {
                if(selected == 0)             //no piece has been selected
@@ -118,7 +118,6 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                else //if(selected==2)        //white chip selected
                   g.drawImage(white.getImage(), x, y, SIZE, SIZE, null);  
              }*/
-
             x+=SIZE;
          }
          y+=SIZE;
@@ -158,8 +157,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       g.setColor(Color.white);
       g.drawString("Money:" +moneyString, 450, 25);
       g.setFont(new Font("TimesRoman", Font.PLAIN, 20)); 
-      g.drawString("$100", 20, 30);
-      g.drawString("$50", 100, 30);
+      g.drawString("$100", 20, 20);
+      g.drawString("$50", 100, 20);
 
    }
 
