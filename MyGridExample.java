@@ -62,8 +62,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       plantBoard = new plant[5][10];//new plant board to control the backend
       buyMenu = new plant[4]; // can change this value as more types of plants are added
       buyMenu[1] = new plant(0, 0, 3000, 0, 0);//wallnut is 1
-      buyMenu[2] = new plant(0, 0, 50, 20, 300);//peashooter is 2
-      buyMenu[3] = new plant(0, 0, 50, 25, 300);//iceShooter is 3
+      buyMenu[2] = new plant(0, 0, 50, 20, 1000);//peashooter is 2
+      buyMenu[3] = new plant(0, 0, 50, 25, 1000);//iceShooter is 3
       //plant logic ends here
       //projectile logic begins here
       projectiles = new ArrayList<projectile>();
@@ -251,7 +251,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
          //for zombies
-         boolean onePercentChance = (Math.random() < 0.003);//controls the rate at which zombies are randomly spawned
+         boolean onePercentChance = (Math.random() < 0.0003);//controls the rate at which zombies are randomly spawned
          if(onePercentChance){
             int random = (int)(Math. random()*(4-0+1))+0;//controls the lane that the zombie is spawned in
             int randomHealth = (int)(Math.random()*(500-1+1)) + 1;

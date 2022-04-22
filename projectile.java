@@ -12,7 +12,7 @@ class projectile{
     }
 
     public void incrementX(){
-        x+=0.025;
+        x+=0.005;
     }
 
     public Double getX(){

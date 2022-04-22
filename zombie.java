@@ -15,7 +15,7 @@ class zombie{
         this.damage = damage;
         this.currentFrame = 0;
         this.isEating = false;
-        this.movementSpeed = 0.001;
+        this.movementSpeed = 0.0001;
     }
 
     public Double getX(){

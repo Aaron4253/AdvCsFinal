@@ -12,7 +12,7 @@ class plant{
         this.health = health;
         this.damage = damage;
         this.delay = delay;
-		currentFrame = 0;
+		currentFrame = delay - 1;
     }
 
 	public int getX() {
