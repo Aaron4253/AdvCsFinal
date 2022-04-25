@@ -339,8 +339,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             if(zombies.get(i) != null && projectiles.get(j) != null){
                //coconutbomb logic
                if(projectiles.get(j).getColor().equals("brown")){
-               if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
-                  if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 2 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 1){
+               if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 2){
+                  if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 2 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 2){
                      zombies.get(i).deductHp(projectiles.get(j).getDamage());
                      projectiles.remove(j);
                      if(zombies.get(i).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
