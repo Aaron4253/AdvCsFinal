@@ -18,12 +18,15 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private ImageIcon peaShooter1 = new ImageIcon("graphics/peaShooter2.gif");
    private ImageIcon iceShooter = new ImageIcon("graphics/iceShooter.gif");
    private ImageIcon iceShooter1 = new ImageIcon("graphics/iceShooter1.gif");
+   private ImageIcon snowPeaProjectile = new ImageIcon("graphics/snowPeaProjectile.gif");
+   private ImageIcon coconutCannonIcon = new ImageIcon("graphics/coconutcannonIcon.gif");
+   private ImageIcon coconutCannon = new ImageIcon("graphics/CoconutCannon.gif");
+   private ImageIcon coconutProjectile = new ImageIcon("graphics/CoconutProjectile.gif");
    private ImageIcon wallNut = new ImageIcon("graphics/wallNut.jpg");//buy menu image
    private ImageIcon wallNut1 = new ImageIcon("graphics/Walnut1.gif");
    private ImageIcon wallNut2 = new ImageIcon("graphics/Walnut2.gif");
    private ImageIcon wallNut3 = new ImageIcon("graphics/Walnut3.gif");
    private ImageIcon redTile = new ImageIcon("graphics/images_1.jpg");      //JPG images can not have transparency
-   private ImageIcon crossHair = new ImageIcon("graphics/crossHair.GIF");	//GIF immages can have transparency
    private ImageIcon zombie = new ImageIcon("graphics/zombie2.gif");	
    private ImageIcon iceZombie = new ImageIcon("graphics/iceZombie.gif");	
    private ImageIcon zombieEating = new ImageIcon("graphics/zombieEating.gif");	
@@ -62,10 +65,11 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       //
       //plant logic starts here
       plantBoard = new plant[5][10];//new plant board to control the backend
-      buyMenu = new plant[4]; // can change this value as more types of plants are added
+      buyMenu = new plant[10]; // can change this value as more types of plants are added
       buyMenu[1] = new plant(0, 0, 7000, 0, 0);//wallnut is 1
       buyMenu[2] = new plant(0, 0, 50, 20, 1000);//peashooter is 2
       buyMenu[3] = new plant(0, 0, 50, 25, 1000);//iceShooter is 3
+      buyMenu[4] = new plant(0,0, 50, 500, 10000);//coconut cannon is 4
       //plant logic ends here
       //projectile logic begins here
       projectiles = new ArrayList<projectile>();
@@ -104,6 +108,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       g.drawImage(peaShooter.getImage(), 20, 20, SIZE, SIZE, null); // go to line  if(mouseC == 0 && mouseR == 0){ around 173
       g.drawImage(wallNut.getImage(), 100, 20, SIZE, SIZE, null);
       g.drawImage(iceShooter.getImage(), 180, 20, SIZE, SIZE, null);
+      g.drawImage(coconutCannonIcon.getImage(), 260, 20, SIZE, SIZE, null);
 
       int x =0, y = 100;	//if y is ever changed, go to int mouseR = ((mouseY-100)/SIZE); and change its value  //upper left corner location of where image will be drawn
       int q = 0, w = 100;
@@ -122,7 +127,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             else if(pieces[r][c]==2)
                g.drawImage(peaShooter1.getImage(), x, y, SIZE, SIZE, null);   
             else if(pieces[r][c]==3)
-               g.drawImage(iceShooter1.getImage(), x, y, SIZE, SIZE, null);            
+               g.drawImage(iceShooter1.getImage(), x, y, SIZE, SIZE, null);   
+            else if(pieces[r][c] == 4)
+               g.drawImage(coconutCannon.getImage(), x, y, SIZE+5, SIZE+5, null);         
             /*if(r==playerR && c==playerC)	   //draw the crosshair on the board after the cell has been drawn
             {
                if(selected == 0)             //no piece has been selected
@@ -154,8 +161,11 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          if(proj.getColor().equals("blue")){//checks if a projectile is shot from the iceShooter
                g.setColor(Color.blue);//projectile color
             if(proj != null){
-               g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 15, 15);
+               g.drawImage(snowPeaProjectile.getImage(), (int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 25, 25, null);
             }
+         }else if(proj.getColor().equals("brown")){
+            g.drawImage(coconutProjectile.getImage(), (int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 50, 50, null);
+
          }else{
                g.setColor(Color.green);//projectile color
             if(proj != null){
@@ -197,6 +207,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          g.drawImage(iceShooter1.getImage(), mouseX-SIZE/2, mouseY-SIZE/2, SIZE, SIZE, null);
 
       }
+      if(selected == 4){
+         g.drawImage(coconutCannon.getImage(), mouseX-SIZE/2, mouseY-SIZE/2, SIZE, SIZE, null);
+      }
    }
 
    public void updateMoney(Graphics g){
@@ -208,7 +221,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       g.drawString("$100", 20, 20);
       g.drawString("$50", 100, 20);
       g.drawString("$150", 180, 20);
-
+      g.drawString("$400", 260, 20);
    }
 
    
@@ -269,7 +282,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
          //for zombies
-         boolean onePercentChance = (Math.random() < 0.0003);//controls the rate at which zombies are randomly spawned
+         boolean onePercentChance = (Math.random() < 0.01);//controls the rate at which zombies are randomly spawned
          if(onePercentChance){
             int random = (int)(Math. random()*(4-0+1))+0;//controls the lane that the zombie is spawned in
             int randomHealth = (int)(Math.random()*(500-1+1)) + 1;
@@ -309,6 +322,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                            if(plantBoard[i][j].getDamage() == 25){//this damage is unqiue to iceShooter
                               temp.setColor("blue");
                               //the projectile color is set to blue, all zombies hit by it will have their ms slowed
+                           }else if(plantBoard[i][j].getDamage() == 500){
+                              temp.setColor("brown");
                            }
                            projectiles.add(temp);
                         }
@@ -322,7 +337,23 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          for(int i = 0; i < zombies.size(); i++){            
             for(int j = 0; j < projectiles.size(); j++){
             if(zombies.get(i) != null && projectiles.get(j) != null){
+               //coconutbomb logic
+               if(projectiles.get(j).getColor().equals("brown")){
                if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
+                  if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 2 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 1){
+                     zombies.get(i).deductHp(projectiles.get(j).getDamage());
+                     projectiles.remove(j);
+                     if(zombies.get(i).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
+                        zombies.remove(i);
+                        money += 50;
+                        //System.out.println("zombie has been removed");
+                     }
+                     //projectile is removed regardless.
+                     //System.out.println("projectile has been removed");
+                  }
+               }
+               }
+               else if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
                   zombies.get(i).deductHp(projectiles.get(j).getDamage());
                   if(projectiles.get(j).getColor().equals("blue")){
                      zombies.get(i).setMovementSpeed(0.0002);
@@ -401,6 +432,16 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                   money -= 150;
                }else{
                   System.out.println("Not enough money");
+               }
+               repaint();
+            }
+            else if(mouseC == 4 && mouseR == 0){
+               if(money >= 400){
+                  selected = 4;
+                  selectedPlant = buyMenu[4].copy();
+                  money -= 400;
+               }else{
+                  System.out.println("Not enoug money");
                }
                repaint();
             }
