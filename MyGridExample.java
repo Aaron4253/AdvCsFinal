@@ -57,7 +57,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       addMouseMotionListener( this );
       mouseX = 0;
       mouseY = 0;
-      money = 1000;
+      money = 10000;
       board = new int[5][10];      //background
       pieces = new int[5][10];     //pieces that go on top of the background
       //timer
@@ -67,9 +67,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       plantBoard = new plant[5][10];//new plant board to control the backend
       buyMenu = new plant[10]; // can change this value as more types of plants are added
       buyMenu[1] = new plant(0, 0, 7000, 0, 0);//wallnut is 1
-      buyMenu[2] = new plant(0, 0, 50, 20, 1000);//peashooter is 2
-      buyMenu[3] = new plant(0, 0, 50, 25, 1000);//iceShooter is 3
-      buyMenu[4] = new plant(0,0, 50, 500, 10000);//coconut cannon is 4
+      buyMenu[2] = new plant(0, 0, 50, 20, 500);//peashooter is 2
+      buyMenu[3] = new plant(0, 0, 50, 25, 500);//iceShooter is 3
+      buyMenu[4] = new plant(0,0, 50, 500, 5000);//coconut cannon is 4
       //plant logic ends here
       //projectile logic begins here
       projectiles = new ArrayList<projectile>();
@@ -109,7 +109,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       g.drawImage(wallNut.getImage(), 100, 20, SIZE, SIZE, null);
       g.drawImage(iceShooter.getImage(), 180, 20, SIZE, SIZE, null);
       g.drawImage(coconutCannonIcon.getImage(), 260, 20, SIZE, SIZE, null);
-
+   
       int x =0, y = 100;	//if y is ever changed, go to int mouseR = ((mouseY-100)/SIZE); and change its value  //upper left corner location of where image will be drawn
       int q = 0, w = 100;
       for(int r=0;r<board.length;r++)
@@ -159,22 +159,22 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       }
       for(projectile proj : projectiles){
          if(proj.getColor().equals("blue")){//checks if a projectile is shot from the iceShooter
-               g.setColor(Color.blue);//projectile color
+            g.setColor(Color.blue);//projectile color
             if(proj != null){
                g.drawImage(snowPeaProjectile.getImage(), (int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 25, 25, null);
             }
          }else if(proj.getColor().equals("brown")){
             g.drawImage(coconutProjectile.getImage(), (int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 50, 50, null);
-
+         
          }else{
-               g.setColor(Color.green);//projectile color
+            g.setColor(Color.green);//projectile color
             if(proj != null){
                g.fillOval((int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 15, 15);
             }
          }
          
       }
-
+   
       for(zombie z : zombies){
          if(z != null){
             if(z.getMovementSpeed() == 0.0002 && z.isEating()){//checks if the zombie is considered slowed
@@ -205,7 +205,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       }
       if(selected == 3){
          g.drawImage(iceShooter1.getImage(), mouseX-SIZE/2, mouseY-SIZE/2, SIZE, SIZE, null);
-
+      
       }
       if(selected == 4){
          g.drawImage(coconutCannon.getImage(), mouseX-SIZE/2, mouseY-SIZE/2, SIZE, SIZE, null);
@@ -224,7 +224,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       g.drawString("$400", 260, 20);
    }
 
-   
+   public double distanceOf(double x1, double y1, double x2, double y2){
+      return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+   }
 
 	//THIS METHOD IS ONLY CALLED THE MOMENT A KEY IS HIT - NOT AT ANY OTHER TIME
 	//pre:   k is a valid keyCode
@@ -292,24 +294,29 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             zombies.add(new zombie(10.0, 3, 50, 1));         
             t = false;
          }
-
+      
          for(int index = 0; index < zombies.size(); index++){
             zombies.get(index).incrementX();
             //System.out.println("zombie x:" + zombies.get(index).getX() + "zombie y:" + zombies.get(index).getY());
             if(zombies.get(index).getX() < 0){
                System.out.println("The Zombies ate your brains");
                zombies.remove(index);
+               index--;
             }
          }
-
+      
          //for projectiles
          for(int i = 0; i < projectiles.size(); i++){
             projectiles.get(i).incrementX();
+            //it seems that the more zombies there are in one lane, the faster the projectile moves.
             //System.out.println("projectile X:" + projectiles.get(i).getX() + "projectile Y:" + projectiles.get(i).getY());
-            if(projectiles.get(i).getX() > 10.0){
+            if(projectiles.get(i).getX() > 11.0){
                projectiles.remove(i);
-            }
+               i--;
+            }            
          }
+        
+                  
          //for plants
          for(int i = 0; i < plantBoard.length; i++){
             for(int j = 0; j < plantBoard[0].length; j++){
@@ -320,12 +327,13 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                      for(zombie z : zombies){//checks if a zombie is in the same row as plant, then the plant will shoot.
                         if(z.getY() == i){
                            if(plantBoard[i][j].getDamage() == 25){//this damage is unqiue to iceShooter
-                              temp.setColor("blue");
+                              temp.setColor("blue");//this color is unique to the ice projectile
                               //the projectile color is set to blue, all zombies hit by it will have their ms slowed
                            }else if(plantBoard[i][j].getDamage() == 500){
                               temp.setColor("brown");
                            }
                            projectiles.add(temp);
+                           break;
                         }
                      }
                      //System.out.println("added a projectile");
@@ -336,36 +344,47 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          //to check if a projectile collides with a zombie
          for(int i = 0; i < zombies.size(); i++){            
             for(int j = 0; j < projectiles.size(); j++){
-            if(zombies.get(i) != null && projectiles.get(j) != null){
+               if(zombies.get(i) != null && projectiles.get(j) != null){
                //coconutbomb logic
-               if(projectiles.get(j).getColor().equals("brown")){
-               if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 2){
-                  if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 2 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 2){
+                  if(projectiles.get(j).getColor().equals("brown")){
+                     if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 1){
                      zombies.get(i).deductHp(projectiles.get(j).getDamage());
-                     projectiles.remove(j);
+                     System.out.println("The size of the zombies array is: " + zombies.size());
+                        for(int k = 0; k < zombies.size(); k++){
+                           System.out.println(distanceOf(zombies.get(k).getX(), zombies.get(k).getY(), projectiles.get(j).getX(), projectiles.get(j).getY()) + " the x of zombie: " + zombies.get(k).getX() + "the y of zombie: " + zombies.get(k).getY());
+                           if(distanceOf(zombies.get(k).getX(), zombies.get(k).getY(), projectiles.get(j).getX(), projectiles.get(j).getY()) < 2){
+                              zombies.get(k).deductHp(projectiles.get(j).getDamage());
+                           //for some reason this has to be here idk
+                              if(zombies.get(k).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
+                                 zombies.remove(k);
+                                 k--;
+                                 money += 50;
+                              //System.out.println("zombie has been removed");
+                              }
+                           //projectile is removed regardless.
+                           //System.out.println("projectile has been removed");
+                           }
+                        }
+                        projectiles.remove(j);
+                        j--;
+                     }
+                  }
+                  
+                  else if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
+                     zombies.get(i).deductHp(projectiles.get(j).getDamage());
+                     if(projectiles.get(j).getColor().equals("blue")){
+                        zombies.get(i).setMovementSpeed(0.0002);
+                     }
                      if(zombies.get(i).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
                         zombies.remove(i);
+                        i--;
                         money += 50;
-                        //System.out.println("zombie has been removed");
-                     }
-                     //projectile is removed regardless.
-                     //System.out.println("projectile has been removed");
-                  }
-               }
-               }
-               else if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
-                  zombies.get(i).deductHp(projectiles.get(j).getDamage());
-                  if(projectiles.get(j).getColor().equals("blue")){
-                     zombies.get(i).setMovementSpeed(0.0002);
-                  }
-                  if(zombies.get(i).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
-                     zombies.remove(i);
-                     money += 50;
                      //System.out.println("zombie has been removed");
-                  }
-                  projectiles.remove(j);//projectile is removed regardless.
+                     }
+                     projectiles.remove(j);//projectile is removed regardless.
+                     j--;
                   //System.out.println("projectile has been removed");
-               }
+                  }
                }
             }
          }
@@ -390,6 +409,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                }
             }
          }
+         
          repaint();
       }
    }
@@ -450,51 +470,51 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             //each index of the array of plants is represented by a tile, if a mouse is inbetween a certain bound and pressed, select that plant and convert mouse crosshair to plant image.
             //
          }else{
-         int mouseR = ((mouseY-100)/SIZE);
-         int mouseC = (mouseX/SIZE);
+            int mouseR = ((mouseY-100)/SIZE);
+            int mouseC = (mouseX/SIZE);
          
-         if(mouseR >=0 && mouseC >= 0 && mouseR < board.length && mouseC < board[0].length)
-         {     //if the mouse is in bounds of the board
-            playerR = mouseR;
-            playerC = mouseC;
-            if (selected == 0 && pieces[playerR][playerC] == 0)//this probably doesnt matter
-            {  //pick up a piece that is there               
-               selected = pieces[playerR][playerC];
-               if(selected == 2 && money >= 100){
-                  money -= 100;
-                  pieces[playerR][playerC] = 0;
-                  Sound.click();
+            if(mouseR >=0 && mouseC >= 0 && mouseR < board.length && mouseC < board[0].length)
+            {     //if the mouse is in bounds of the board
+               playerR = mouseR;
+               playerC = mouseC;
+               if (selected == 0 && pieces[playerR][playerC] == 0)//this probably doesnt matter
+               {  //pick up a piece that is there               
+                  selected = pieces[playerR][playerC];
+                  if(selected == 2 && money >= 100){
+                     money -= 100;
+                     pieces[playerR][playerC] = 0;
+                     Sound.click();
                   
-               } else if(selected == 1 && money >= 50){
-                  money -= 50;
-                  pieces[playerR][playerC] = 0;
+                  } else if(selected == 1 && money >= 50){
+                     money -= 50;
+                     pieces[playerR][playerC] = 0;
+                     Sound.click();
+                  }
+               
+               }//the above probably doesnt matter idk.
+               else if (selected != 0 && pieces[playerR][playerC] == 0 && selectedPlant != null)//to put stuff down
+               {  //put down a piece you selected
+                  pieces[playerR][playerC] = selected;
+                  selectedPlant.setX(playerC);
+                  selectedPlant.setY(playerR);
+                  plantBoard[playerR][playerC] = selectedPlant;
+                  selected = 0;
+                  selectedPlant = null;
                   Sound.click();
                }
-               
-            }//the above probably doesnt matter idk.
-            else if (selected != 0 && pieces[playerR][playerC] == 0 && selectedPlant != null)//to put stuff down
-            {  //put down a piece you selected
-               pieces[playerR][playerC] = selected;
-               selectedPlant.setX(playerC);
-               selectedPlant.setY(playerR);
-               plantBoard[playerR][playerC] = selectedPlant;
-               selected = 0;
-               selectedPlant = null;
-               Sound.click();
+               else//illegal move
+               {
+                  Sound.randomNote();
+               }
             }
-            else//illegal move
-            {
-               Sound.randomNote();
+            else
+            {     //reset the player into the center
+               playerR = board.length/2;
+               playerC = board[0].length/2;
             }
-         }
-         else
-         {     //reset the player into the center
-            playerR = board.length/2;
-            playerC = board[0].length/2;
-         }
-      
-      } 
-   }
+         
+         } 
+      }
       repaint();
    }
 
