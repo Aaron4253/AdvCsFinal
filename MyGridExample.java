@@ -341,17 +341,23 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                }
             }
          }
+         
          //to check if a projectile collides with a zombie
-         for(int i = 0; i < zombies.size(); i++){            
             for(int j = 0; j < projectiles.size(); j++){
-               if(zombies.get(i) != null && projectiles.get(j) != null){
+               boolean collides = false;
+               int index = -1;
+               for(int i = 0; i < zombies.size(); i++){     
+                  if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 1){
+                     collides = true;
+                     index = i;
+                  }
+               }
+               if(collides){
                //coconutbomb logic
                   if(projectiles.get(j).getColor().equals("brown")){
-                     if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && Math.abs(zombies.get(i).getY() - projectiles.get(j).getY()) < 1){
-                     zombies.get(i).deductHp(projectiles.get(j).getDamage());
-                     System.out.println("The size of the zombies array is: " + zombies.size());
+                     //zombies.get(i).deductHp(projectiles.get(j).getDamage());
                         for(int k = 0; k < zombies.size(); k++){
-                           System.out.println(distanceOf(zombies.get(k).getX(), zombies.get(k).getY(), projectiles.get(j).getX(), projectiles.get(j).getY()) + " the x of zombie: " + zombies.get(k).getX() + "the y of zombie: " + zombies.get(k).getY());
+                           //System.out.println(distanceOf(zombies.get(k).getX(), zombies.get(k).getY(), projectiles.get(j).getX(), projectiles.get(j).getY()) + " the x of zombie: " + zombies.get(k).getX() + "the y of zombie: " + zombies.get(k).getY());
                            if(distanceOf(zombies.get(k).getX(), zombies.get(k).getY(), projectiles.get(j).getX(), projectiles.get(j).getY()) < 2){
                               zombies.get(k).deductHp(projectiles.get(j).getDamage());
                            //for some reason this has to be here idk
@@ -367,27 +373,25 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                         }
                         projectiles.remove(j);
                         j--;
-                     }
-                  }
+                     
+                  } else {
                   
-                  else if(Math.abs(zombies.get(i).getX() - projectiles.get(j).getX()) < 0.1 && zombies.get(i).getY() == projectiles.get(j).getY()){
-                     zombies.get(i).deductHp(projectiles.get(j).getDamage());
+                     zombies.get(index).deductHp(projectiles.get(j).getDamage());
                      if(projectiles.get(j).getColor().equals("blue")){
-                        zombies.get(i).setMovementSpeed(0.0002);
+                        zombies.get(index).setMovementSpeed(0.0002);
                      }
-                     if(zombies.get(i).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
-                        zombies.remove(i);
-                        i--;
+                     if(zombies.get(index).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
+                        zombies.remove(index);
                         money += 50;
                      //System.out.println("zombie has been removed");
                      }
                      projectiles.remove(j);//projectile is removed regardless.
-                     j--;
                   //System.out.println("projectile has been removed");
+                  j--;
                   }
                }
+            
             }
-         }
          //check if zombie is ontop of a plant
          for(int i = 0; i < plantBoard.length; i++){
             for(int j = 0; j < plantBoard[0].length; j++){
