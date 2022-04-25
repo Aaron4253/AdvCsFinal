@@ -22,6 +22,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private ImageIcon coconutCannonIcon = new ImageIcon("graphics/coconutcannonIcon.gif");
    private ImageIcon coconutCannon = new ImageIcon("graphics/CoconutCannon.gif");
    private ImageIcon coconutProjectile = new ImageIcon("graphics/CoconutProjectile.gif");
+   private ImageIcon explosion = new ImageIcon("graphics/explosionEffect.gif");
    private ImageIcon wallNut = new ImageIcon("graphics/wallNut.jpg");//buy menu image
    private ImageIcon wallNut1 = new ImageIcon("graphics/Walnut1.gif");
    private ImageIcon wallNut2 = new ImageIcon("graphics/Walnut2.gif");
@@ -42,7 +43,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private static plant[][] plantBoard;  
    private static plant[] buyMenu;  
    private static ArrayList<projectile> projectiles;
-   private static ArrayList<zombie> zombies;   
+   private static ArrayList<zombie> zombies;  
+   private static ArrayList<explosion> explosions; 
    private static int playerR;			//start row for the player selection tool
    private static int playerC;			//start col for the player selection tool
    private static int selected;        //value of the piece selected (0-none, 1-black chip, 2-white chip)
@@ -77,6 +79,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       //zombie logic begins here
       zombies = new ArrayList<zombie>();
       //zombie logic ends here
+      //explosions
+      explosions = new ArrayList<explosion>();
+      //explosions end
       selected = 0; //holds onto the image of the plant selected
       int nextValue = 0;            //to assign alternating values to the board (0,1)
       for(int r=0;r<board.length;r++)	
@@ -173,6 +178,12 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             }
          }
          
+      }
+
+      for(explosion ex : explosions){
+         if(ex != null){
+            g.drawImage(explosion.getImage(), (int)(ex.getX()*SIZE + SIZE) - 70, ex.getY()*SIZE + SIZE, 150, 150, null);
+         }
       }
    
       for(zombie z : zombies){
@@ -284,10 +295,10 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
          //for zombies
-         boolean onePercentChance = (Math.random() < 0.01);//controls the rate at which zombies are randomly spawned
-         if(onePercentChance){
+         boolean spawnRate = (Math.random() < 0.01);//controls the rate at which zombies are randomly spawned
+         if(spawnRate){
             int random = (int)(Math. random()*(4-0+1))+0;//controls the lane that the zombie is spawned in
-            int randomHealth = (int)(Math.random()*(500-1+1)) + 1;
+            int randomHealth = 500;//(int)(Math.random()*(500-1+1)) + 1;
             zombies.add(new zombie(9.2, random, randomHealth, 1));         
          }
          if(t){
@@ -315,7 +326,16 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                i--;
             }            
          }
-        
+         //removing explosions
+         for(int i = 0; i < explosions.size(); i++){
+            explosions.get(i).incrementFrame();
+            //it seems that the more zombies there are in one lane, the faster the projectile moves.
+            //System.out.println("projectile X:" + projectiles.get(i).getX() + "projectile Y:" + projectiles.get(i).getY());
+            if(explosions.get(i).getCurrentFrame() > explosions.get(i).getRunTime()){
+               explosions.remove(i);
+               i--;
+            }            
+         }
                   
          //for plants
          for(int i = 0; i < plantBoard.length; i++){
@@ -356,6 +376,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                //coconutbomb logic
                   if(projectiles.get(j).getColor().equals("brown")){
                      //zombies.get(i).deductHp(projectiles.get(j).getDamage());
+                     explosions.add(new explosion(projectiles.get(j).getX(), projectiles.get(j).getY(), 200));
                         for(int k = 0; k < zombies.size(); k++){
                            //System.out.println(distanceOf(zombies.get(k).getX(), zombies.get(k).getY(), projectiles.get(j).getX(), projectiles.get(j).getY()) + " the x of zombie: " + zombies.get(k).getX() + "the y of zombie: " + zombies.get(k).getY());
                            if(distanceOf(zombies.get(k).getX(), zombies.get(k).getY(), projectiles.get(j).getX(), projectiles.get(j).getY()) < 2){
