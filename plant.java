@@ -5,6 +5,7 @@ class plant{
     int damage;
     int delay;
 	int currentFrame;
+	private final int originalHp;
 
     public plant(int x, int y, int health, int damage, int delay){
         this.x = x;
@@ -13,6 +14,7 @@ class plant{
         this.damage = damage;
         this.delay = delay;
 		currentFrame = delay - 1;
+		this.originalHp = health;
     }
 
 	public int getX() {
@@ -69,6 +71,10 @@ class plant{
 
 	public void incrementFrame(){
 		this.currentFrame++;
+	}
+
+	public int getOriginalHp(){
+		return originalHp;
 	}
 
 	public plant copy(){

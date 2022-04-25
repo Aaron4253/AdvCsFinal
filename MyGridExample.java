@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 //the color for slowed zombies is #107ad1
 public class MyGridExample extends JPanel implements MouseListener, MouseMotionListener
 {
-   //boolean t = true;
+   boolean t = true;
    private ImageIcon black = new ImageIcon("graphics/blackPiece.gif");//change these to plants.
    private ImageIcon white = new ImageIcon("graphics/whitePiece.gif");
    private ImageIcon blueTile = new ImageIcon("graphics/images_1.jpg");
@@ -18,8 +18,10 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private ImageIcon peaShooter1 = new ImageIcon("graphics/peaShooter2.gif");
    private ImageIcon iceShooter = new ImageIcon("graphics/iceShooter.gif");
    private ImageIcon iceShooter1 = new ImageIcon("graphics/iceShooter1.gif");
-   private ImageIcon wallNut = new ImageIcon("graphics/wallNut.jpg");
-   private ImageIcon wallNut1 = new ImageIcon("graphics/wallNut1.gif");
+   private ImageIcon wallNut = new ImageIcon("graphics/wallNut.jpg");//buy menu image
+   private ImageIcon wallNut1 = new ImageIcon("graphics/Walnut1.gif");
+   private ImageIcon wallNut2 = new ImageIcon("graphics/Walnut2.gif");
+   private ImageIcon wallNut3 = new ImageIcon("graphics/Walnut3.gif");
    private ImageIcon redTile = new ImageIcon("graphics/images_1.jpg");      //JPG images can not have transparency
    private ImageIcon crossHair = new ImageIcon("graphics/crossHair.GIF");	//GIF immages can have transparency
    private ImageIcon zombie = new ImageIcon("graphics/zombie2.gif");	
@@ -45,7 +47,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    protected static int mouseX;			//locations for the mouse pointer
    protected static int mouseY;
    private int money;
-
+   private int wallNutStartingHp;
    public MyGridExample()
    {
       addMouseListener( this );
@@ -61,7 +63,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       //plant logic starts here
       plantBoard = new plant[5][10];//new plant board to control the backend
       buyMenu = new plant[4]; // can change this value as more types of plants are added
-      buyMenu[1] = new plant(0, 0, 3000, 0, 0);//wallnut is 1
+      buyMenu[1] = new plant(0, 0, 7000, 0, 0);//wallnut is 1
       buyMenu[2] = new plant(0, 0, 50, 20, 1000);//peashooter is 2
       buyMenu[3] = new plant(0, 0, 50, 25, 1000);//iceShooter is 3
       //plant logic ends here
@@ -104,6 +106,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       g.drawImage(iceShooter.getImage(), 180, 20, SIZE, SIZE, null);
 
       int x =0, y = 100;	//if y is ever changed, go to int mouseR = ((mouseY-100)/SIZE); and change its value  //upper left corner location of where image will be drawn
+      int q = 0, w = 100;
       for(int r=0;r<board.length;r++)
       {
          x = 0;						            //reset the row distance
@@ -129,9 +132,23 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                else //if(selected==2)        //white chip selected
                   g.drawImage(white.getImage(), x, y, SIZE, SIZE, null);  
              }*/
+            /* for(int i = 0; i < plantBoard.length; i++){
+               for(int j = 0; j < plantBoard[0].length; j++){
+                  if(plantBoard[i][j] != null){
+                     if(plantBoard[i][j].getOriginalHp() > 2500){//only a wallnut could have this much hp
+                        if(plantBoard[i][j].getHealth() < plantBoard[i][j].getOriginalHp() * (Double)1.0/3){
+                           g.drawImage(wallNut3.getImage(), i, j, SIZE, SIZE, null);  
+                        }else if(plantBoard[i][j].getHealth() < plantBoard[i][j].getOriginalHp() * (Double)2.0/3){
+                           g.drawImage(wallNut2.getImage(), i+550, j+250, SIZE, SIZE, null);  
+                        }
+                     }
+                  }                  
+               }
+            }*/
             x+=SIZE;
          }
          y+=SIZE;
+         
       }
       for(projectile proj : projectiles){
          if(proj.getColor().equals("blue")){//checks if a projectile is shot from the iceShooter
@@ -163,6 +180,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             }
          }
       }
+      
       
       updateMouse(g);
       updateMoney(g);
@@ -257,10 +275,10 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
             int randomHealth = (int)(Math.random()*(500-1+1)) + 1;
             zombies.add(new zombie(9.2, random, randomHealth, 1));         
          }
-         /*if(t){
-            zombies.add(new zombie(10.0, 3, 50, 10));         
+         if(t){
+            zombies.add(new zombie(10.0, 3, 50, 1));         
             t = false;
-         }*/
+         }
 
          for(int index = 0; index < zombies.size(); index++){
             zombies.get(index).incrementX();
