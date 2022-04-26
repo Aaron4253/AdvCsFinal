@@ -189,14 +189,14 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       for(zombie z : zombies){
          if(z != null){
             if(z.getMovementSpeed() == 0.0002 && z.isEating()){//checks if the zombie is considered slowed
-               g.drawImage(iceZombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE +15, SIZE+30, SIZE+30, null); 
+               g.drawImage(iceZombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 80, z.getY()*SIZE + SIZE +15, SIZE+60, SIZE+30, null); 
                //creates the image of a slowed zombie
             }else if(z.getMovementSpeed() == 0.0002){
-               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE + 15, SIZE+30, SIZE+30, null); 
+               g.drawImage(iceZombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 80, z.getY()*SIZE + SIZE + 15, SIZE+60, SIZE+30, null); 
             }else if(z.isEating()){
-               g.drawImage(zombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE + 15, SIZE+30, SIZE+30, null);  
+               g.drawImage(zombieEating.getImage(), (int)(z.getX()*SIZE + SIZE) - 80, z.getY()*SIZE + SIZE + 15, SIZE+60, SIZE+30, null);  
             }else{
-               g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 40, z.getY()*SIZE + SIZE + 15, SIZE+30, SIZE+30, null);  
+               g.drawImage(zombie.getImage(), (int)(z.getX()*SIZE + SIZE) - 80, z.getY()*SIZE + SIZE + 15, SIZE+60, SIZE+30, null);  
                //draw zombie here
             }
          }
@@ -295,14 +295,14 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
          //for zombies
-         boolean spawnRate = (Math.random() < 0.01);//controls the rate at which zombies are randomly spawned
+         boolean spawnRate = (Math.random() < 0.0001);//controls the rate at which zombies are randomly spawned
          if(spawnRate){
             int random = (int)(Math. random()*(4-0+1))+0;//controls the lane that the zombie is spawned in
-            int randomHealth = 500;//(int)(Math.random()*(500-1+1)) + 1;
+            int randomHealth = 5000;//(int)(Math.random()*(500-1+1)) + 1;
             zombies.add(new zombie(9.2, random, randomHealth, 1));         
          }
          if(t){
-            zombies.add(new zombie(10.0, 3, 50, 1));         
+            zombies.add(new zombie(10.0, 3, 50000, 1));         
             t = false;
          }
       
