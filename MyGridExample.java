@@ -32,6 +32,9 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private ImageIcon iceZombie = new ImageIcon("graphics/iceZombie.gif");	
    private ImageIcon zombieEating = new ImageIcon("graphics/zombieEating.gif");	
    private ImageIcon iceZombieEating = new ImageIcon("graphics/iceZombieEating.gif");	
+   private ImageIcon dyingZombie = new ImageIcon("graphics/dyingZombie.gif");	
+   private ImageIcon iceDyingZombie = new ImageIcon("graphics/iceDyingZombie.gif");	
+   private ImageIcon incineratedZombie = new ImageIcon("graphics/IncineratedZombie.gif");	
 
 
    private static final int SIZE=60;	//size of cell being drawn
@@ -45,6 +48,8 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    private static ArrayList<projectile> projectiles;
    private static ArrayList<zombie> zombies;  
    private static ArrayList<explosion> explosions; 
+   private static ArrayList<dyingZombie> dyingZombies;
+   private static ArrayList<incineratedZombie> incineratedZombies;
    private static int playerR;			//start row for the player selection tool
    private static int playerC;			//start col for the player selection tool
    private static int selected;        //value of the piece selected (0-none, 1-black chip, 2-white chip)
@@ -52,7 +57,6 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
    protected static int mouseX;			//locations for the mouse pointer
    protected static int mouseY;
    private int money;
-   private int wallNutStartingHp;
    public MyGridExample()
    {
       addMouseListener( this );
@@ -82,6 +86,12 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       //explosions
       explosions = new ArrayList<explosion>();
       //explosions end
+      //normal dying zombie
+      dyingZombies = new ArrayList<dyingZombie>();
+      //normal dying zombies end
+      //incinerated zombies
+      incineratedZombies = new ArrayList<incineratedZombie>();
+      //incinerated zombies end
       selected = 0; //holds onto the image of the plant selected
       int nextValue = 0;            //to assign alternating values to the board (0,1)
       for(int r=0;r<board.length;r++)	
@@ -169,7 +179,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                g.drawImage(snowPeaProjectile.getImage(), (int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 25, 25, null);
             }
          }else if(proj.getColor().equals("brown")){
-            g.drawImage(coconutProjectile.getImage(), (int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 50, 50, null);
+            g.drawImage(coconutProjectile.getImage(), (int)(proj.getX()*SIZE + SIZE), proj.getY()*SIZE + SIZE + 50, 40, 40, null);
          
          }else{
             g.setColor(Color.green);//projectile color
@@ -184,6 +194,21 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          if(ex != null){
             g.drawImage(explosion.getImage(), (int)(ex.getX()*SIZE + SIZE) - 70, ex.getY()*SIZE + SIZE, 150, 150, null);
          }
+      }
+
+      for(dyingZombie dz : dyingZombies){
+         if(dz != null){
+            if(dz.getRunTime() == 400){
+               g.drawImage(iceDyingZombie.getImage(), (int)(dz.getX()*SIZE + SIZE) - 80, dz.getY()*SIZE + SIZE +15, SIZE+60, SIZE+30, null);
+            }else{
+               g.drawImage(dyingZombie.getImage(), (int)(dz.getX()*SIZE + SIZE) - 80, dz.getY()*SIZE + SIZE +15, SIZE+60, SIZE+30, null);
+            }
+         }
+      }
+
+      for(incineratedZombie ic : incineratedZombies){
+         g.drawImage(incineratedZombie.getImage(), (int)(ic.getX()*SIZE + SIZE) - 80, ic.getY()*SIZE + SIZE +15, SIZE, SIZE+20, null);
+
       }
    
       for(zombie z : zombies){
@@ -295,14 +320,14 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
       public void actionPerformed(ActionEvent e)	//this is called for each timer iteration
       {
          //for zombies
-         boolean spawnRate = (Math.random() < 0.0001);//controls the rate at which zombies are randomly spawned
+         boolean spawnRate = (Math.random() < 0.01);//controls the rate at which zombies are randomly spawned
          if(spawnRate){
             int random = (int)(Math. random()*(4-0+1))+0;//controls the lane that the zombie is spawned in
-            int randomHealth = 5000;//(int)(Math.random()*(500-1+1)) + 1;
+            int randomHealth = 5;//(int)(Math.random()*(500-1+1)) + 1;
             zombies.add(new zombie(9.2, random, randomHealth, 1));         
          }
          if(t){
-            zombies.add(new zombie(10.0, 3, 50000, 1));         
+            zombies.add(new zombie(10.0, 3, 5, 1));         
             t = false;
          }
       
@@ -329,14 +354,30 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
          //removing explosions
          for(int i = 0; i < explosions.size(); i++){
             explosions.get(i).incrementFrame();
-            //it seems that the more zombies there are in one lane, the faster the projectile moves.
-            //System.out.println("projectile X:" + projectiles.get(i).getX() + "projectile Y:" + projectiles.get(i).getY());
+           
             if(explosions.get(i).getCurrentFrame() > explosions.get(i).getRunTime()){
                explosions.remove(i);
                i--;
             }            
          }
-                  
+         //removing dead zombie animation
+         for(int i = 0; i < dyingZombies.size(); i++){
+            dyingZombies.get(i).incrementFrame();
+            
+            if(dyingZombies.get(i).getCurrentFrame() > dyingZombies.get(i).getRunTime()){
+               dyingZombies.remove(i);
+               i--;
+            }            
+         }
+         //removing dead incinerated zombies animation
+         for(int i = 0; i < incineratedZombies.size(); i++){
+            incineratedZombies.get(i).incrementFrame();
+            
+            if(incineratedZombies.get(i).getCurrentFrame() > incineratedZombies.get(i).getRunTime()){
+               incineratedZombies.remove(i);
+               i--;
+            }            
+         }
          //for plants
          for(int i = 0; i < plantBoard.length; i++){
             for(int j = 0; j < plantBoard[0].length; j++){
@@ -383,6 +424,7 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                               zombies.get(k).deductHp(projectiles.get(j).getDamage());
                            //for some reason this has to be here idk
                               if(zombies.get(k).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
+                                 incineratedZombies.add(new incineratedZombie(zombies.get(k).getX(), zombies.get(k).getY(), 500));
                                  zombies.remove(k);
                                  k--;
                                  money += 50;
@@ -400,12 +442,20 @@ public class MyGridExample extends JPanel implements MouseListener, MouseMotionL
                      zombies.get(index).deductHp(projectiles.get(j).getDamage());
                      if(projectiles.get(j).getColor().equals("blue")){
                         zombies.get(index).setMovementSpeed(0.0002);
-                     }
-                     if(zombies.get(index).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
-                        zombies.remove(index);
-                        money += 50;
-                     //System.out.println("zombie has been removed");
-                     }
+                           if(zombies.get(index).getHealth() <= 0){//check if a zombie died. If so, zombies is removed 
+                              dyingZombies.add(new dyingZombie(zombies.get(index).getX(), zombies.get(index).getY(), 400));
+                              zombies.remove(index);
+                              money += 50;
+                           }
+                        }else{
+                           if(zombies.get(index).getHealth() <= 0){//check if a zombie died. If so, zombies is removed
+                              dyingZombies.add(new dyingZombie(zombies.get(index).getX(), zombies.get(index).getY(), 350)); 
+                              zombies.remove(index);
+                              money += 50;
+                        }                        
+                        //System.out.println("zombie has been removed");
+                        }
+                                          
                      projectiles.remove(j);//projectile is removed regardless.
                   //System.out.println("projectile has been removed");
                   j--;
